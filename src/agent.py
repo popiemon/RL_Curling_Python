@@ -74,21 +74,21 @@ class agent:
             # 次のチームが自分のチームかどうかを確認します
             next_team = cli.get_next_team()
 
+            ## ML/AI ##
+            shot_x = 0.0
+            shot_y = 2.4
+            shot_rotation = 1
+
+            shot_list.append({"x":shot_x, "y":shot_y, "rotation":shot_rotation})
+            ###########
+
             # 次のチームが自分のチームであれば、moveを送信します
             if my_team == next_team:
                 
-                cli.move(x=0, y=2.4, rotation=StoneRotation.counterclockwise)
+                cli.move(x=shot_x, y=shot_y, rotation=shot_rotateion_dict[shot_rotation])
             else:
                 # 次のチームが自分のチームでなければ、何もしません
                 continue
-            
-            ### いろいろ追加 ###
-            cli.update()
-            match_data = cli.get_match_data()
-            for update in match_data.update_list:
-                update_dict = cli.convert_update(update, remove_trajectory)
-            print(update_dict["state"]["stones"])
-            ####################
 
         # 試合が終了したら、clientから試合データを取得します
         move_info = cli.get_move_info()
