@@ -43,6 +43,7 @@ class agent:
         info_df_list = []
         shot_list = []
         shot_rotateion_dict = {0:StoneRotation.clockwise, 1:StoneRotation.inturn, 2:StoneRotation.counterclockwise, 3:StoneRotation.outturn}
+        shot = 0
 
         # 試合を開始します
         while True:
@@ -66,29 +67,39 @@ class agent:
                 # 試合が終了したらループを抜けます
                 break
 
-            ### いろいろ追加 ###
-            for update in match_data.update_list:
-                update_dict = cli.convert_update(update, remove_trajectory)
-
-            df = data_df.stones(update_dict["state"]["stones"])
-            info_df_list.append(data_df.stones(update_dict["state"]["stones"]))
-            #####
-
             # 次のチームが自分のチームかどうかを確認します
             next_team = cli.get_next_team()
 
-            ## ML/AI ##
-            shot_x = 0.0
-            shot_y = 2.4
-            shot_rotation = 1
-
-            shot_list.append({"x":shot_x, "y":shot_y, "rotation":shot_rotation})
-            ###################
-
             # 次のチームが自分のチームであれば、moveを送信します
             if my_team == next_team:
+
+                ### いろいろ追加 #################################################################
+                for update in match_data.update_list:
+                    update_dict = cli.convert_update(update, remove_trajectory)
+                
+                info_df_list.append(data_df.stones(update_dict))
+                shot = update_dict["state"]["shot"]
+
+                ## Brain ##
+                shot_x = 0.0
+                shot_y = 2.4
+                shot_rotation = 1
+
+                shot_list.append({"x":shot_x, "y":shot_y, "rotation":shot_rotation})
+                ##################################################################################
                 
                 cli.move(x=shot_x, y=shot_y, rotation=shot_rotateion_dict[shot_rotation])
+
+                ################################# 15shotの結果######################################
+                if shot == 15:
+                    match_data = cli.get_match_data()
+                    for update in match_data.update_list:
+                        update_dict = cli.convert_update(update, remove_trajectory)
+                    last_shot = update_dict.copy()
+                    last_shot["state"]["shot"] = shot+1
+                    info_df_list.append(data_df.stones(last_shot))
+                ####################################################################################
+
             else:
                 # 次のチームが自分のチームでなければ、何もしません
                 continue
