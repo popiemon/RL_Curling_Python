@@ -8,13 +8,16 @@ import src.data_df as data_df
 import src.save_info as save_info
 
 class agent:
-    def __init__(self, team: str = "team0", rate_limit: float = 0.5):
+    def __init__(self, team: str = "team0", rate_limit: float = 0.5, dir_name: str = None):
         assert (team == "team0") or (team == "team1"), 'Expected team0 or team1, input team is {0}'.format(team)
         
         self.team = team
         self.rate_limit = rate_limit
+        self.dir_name = dir_name
 
     def play(self):
+        assert (self.team == "team0") or (self.team == "team1"), 'Expected team0 or team1, input team is {0}'.format(self.team)
+
         if self.team == "team0":
             port_no = 10000
         elif self.team == "team1":
@@ -69,7 +72,7 @@ class agent:
 
             df = data_df.stones(update_dict["state"]["stones"])
             info_df_list.append(data_df.stones(update_dict["state"]["stones"]))
-            ####################
+            #####
 
             # 次のチームが自分のチームかどうかを確認します
             next_team = cli.get_next_team()
@@ -80,7 +83,7 @@ class agent:
             shot_rotation = 1
 
             shot_list.append({"x":shot_x, "y":shot_y, "rotation":shot_rotation})
-            ###########
+            ###################
 
             # 次のチームが自分のチームであれば、moveを送信します
             if my_team == next_team:
@@ -105,6 +108,6 @@ class agent:
         with open("data.json", "w", encoding="UTF-8") as f:
             json.dump(update_dict, f, indent=4)
         
-        save_info.list_pickle(info_df_list, self.team, "data/stones_map")
-        save_info.list_pickle(shot_list, self.team, "data/shot")
+        save_info.list_pickle(info_df_list, self.team, "gamedata/"+self.dir_name, "map")
+        save_info.list_pickle(shot_list, self.team, "gamedata/"+self.dir_name, "shot")
 

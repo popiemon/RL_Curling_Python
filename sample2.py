@@ -4,8 +4,6 @@ import pathlib
 from dc3client import SocketClient
 from dc3client.models import StoneRotation
 
-import src.stones as stones
-
 if __name__ == "__main__":
     # 機械学習のモデルなど、時間のかかる処理はここで行います。
     # 通信プロトコルの解説において、is_readyを受け取ってからreadyを返すまでに行うことを推奨しています。
@@ -34,7 +32,7 @@ if __name__ == "__main__":
     # auto_start : サーバーに接続した際に自動で試合を開始するかどうかを指定します。デフォルトではTrueとなっています。
     # これは、dc3のコンバート機能のみを使用したいときにサーバーを起動する必要をなくすために用意されています。
     # rate_limit : 通信のレート制限を指定します。デフォルトでは2.0秒に1回となっています。早すぎるとサーバーから切断される可能性があります。
-    cli = SocketClient(host="localhost", port=10000, client_name="SAMPLE_AI0", auto_start=True, rate_limit=0.5)
+    cli = SocketClient(host="localhost", port=10001, client_name="SAMPLE_AI0", auto_start=True, rate_limit=0.5)
 
     # ログを出力するディレクトリを指定します。デフォルトでは"logs/"となっています。
     log_dir = pathlib.Path("logs")
@@ -78,8 +76,7 @@ if __name__ == "__main__":
         ### いろいろ追加 ###
         for update in match_data.update_list:
             update_dict = cli.convert_update(update, remove_trajectory)
-        #print(update_dict["state"]["stones"])
-        stones.locate(update_dict["state"]["stones"])
+        print(update_dict["state"]["stones"])
         ####################
 
         # 次のチームが自分のチームかどうかを確認します
@@ -100,7 +97,7 @@ if __name__ == "__main__":
         else:
             # 次のチームが自分のチームでなければ、何もしません
             continue
-        
+
         ### いろいろ追加 ###
         cli.update()
         match_data = cli.get_match_data()
