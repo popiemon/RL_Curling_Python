@@ -4,10 +4,10 @@ import torch
 import torch.nn as nn
 
 class CNN(nn.Module):
-    def __init__(self):
+    def __init__(self, dim):
         super(CNN, self).__init__()
 
-        self.conv1 = nn.Conv2d(3, 16, kernel_size=3, stride=1, padding=1)
+        self.conv1 = nn.Conv2d(1, 16, kernel_size=3, stride=1, padding=1)
         self.elu1 = nn.ELU()
         self.maxpool1 = nn.MaxPool2d(kernel_size=2, stride=2)
 
@@ -22,9 +22,7 @@ class CNN(nn.Module):
         self.fc1 = nn.Linear(64 * 8 * 8, 128)
         self.elu4 = nn.ELU()
 
-        self.fc2_1 = nn.Linear(128, 2)
-        self.fc2_2 = nn.Linear(128, 3)
-        self.softmax = nn.Softmax()
+        self.fc2 = nn.Linear(128, dim)
 
     def forward(self, x):
         x = self.conv1(x)
@@ -44,9 +42,8 @@ class CNN(nn.Module):
         x = self.fc1(x)
         x = self.elu4(x)
 
-        output1 = self.fc2_1(x)
-        output2 = self.softmax(self.fc2_2(x))
+        output = self.fc2(x)
 
-        return output1, output2
+        return output
 
 
