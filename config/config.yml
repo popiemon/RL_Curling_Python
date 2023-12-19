@@ -1,0 +1,13 @@
+model:
+  name: "exp001"
+  input_pix: 90 # 盤面情報のピクセル数
+
+reward:
+  inside_stone: 10 # 相手のstoneよりも内側のstone 1個ずつに入る得点
+
+stone:
+  shot_num: 14 # shot x, y の段階数
+  x_min: -0.2 # stone投擲x の最小値
+  x_max: 0.2 # stone投擲x の最大値
+  y_min: 2.0 # stone投擲y の最小値
+  y_max: 3.0 # stone投擲y の最大値

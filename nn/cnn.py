@@ -19,6 +19,7 @@ class CNN(nn.Module):
         self.elu3 = nn.ELU()
         self.maxpool3 = nn.MaxPool2d(kernel_size=2, stride=2)
 
+        self.pool4 = nn.AdaptiveAvgPool2d(8) # 特徴マップを 8x8
         self.fc1 = nn.Linear(64 * 8 * 8, 128)
         self.elu4 = nn.ELU()
 
@@ -36,6 +37,8 @@ class CNN(nn.Module):
         x = self.conv3(x)
         x = self.elu3(x)
         x = self.maxpool3(x)
+
+        x = self.pool4(x)
 
         x = x.view(x.size(0), -1)
 

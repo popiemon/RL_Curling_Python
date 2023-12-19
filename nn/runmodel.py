@@ -1,5 +1,6 @@
 #! Python3
 
+import os
 import numpy as np
 import torch
 import torch.nn as nn
@@ -8,12 +9,17 @@ from nn.cnn import CNN
 
 class DQN:
     """Neural Network Training Class"""
-    def __init__(self, dim: int) -> None:
+    def __init__(self, dim: int, model_path: str = None, modelname: str = None) -> None:
         """Initialize Training Class"""
         super(DQN, self).__init__()
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
         model = CNN(dim)
+        modelfile = model_path + '/' + modelname
+        if os.path.isfile(modelfile):
+            print(modelfile, "model is loaded.")
+            model.load_state_dict(torch.load(modelfile))
+
         self.model = model.to(self.device)
         self.criterion = nn.MSELoss()
         self.optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
@@ -35,7 +41,7 @@ class DQN:
         input = input.to(self.device)
         output = self.model(input)
 
-        label = trp1 + qtp1
+        label = rtp1 + qtp1
         label = torch.tensor(label, dtype=torch.float32)
         label = label.unsqueeze(0)
         label = label.to(self.device)
@@ -67,7 +73,13 @@ class DQN:
         return output.to('cpu').detach().numpy().copy()
     
 
-    def save_model(self, dir_path, modelname) -> None:
-        torch.save(self.model, dir_path + '/' + modelname)
+    def save_model(self, dir_path: str, modelname: str) -> None:
+        """model の保存
+
+        Args:
+            dir_path (str): model 保存 dir
+            modelname (str): 保存する model の名前
+        """
+        torch.save(self.model.state_dict(), dir_path + '/' + modelname)
         print("model is saved.", dir_path + '/' + modelname)
         
