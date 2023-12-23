@@ -7,7 +7,7 @@ class CNN(nn.Module):
     def __init__(self, dim):
         super(CNN, self).__init__()
 
-        self.conv1 = nn.Conv2d(1, 16, kernel_size=3, stride=1, padding=1)
+        self.conv1 = nn.Conv2d(3, 16, kernel_size=3, stride=1, padding=1)
         self.elu1 = nn.ELU()
         self.maxpool1 = nn.MaxPool2d(kernel_size=2, stride=2)
 
