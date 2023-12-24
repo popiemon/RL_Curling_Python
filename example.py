@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from copy import deepcopy
 from typing import Optional, Any
 import time
+import pickle
 
 global first_flag
 
@@ -19,6 +20,7 @@ class ShotParam:
 
 def read_output(process):
     global first_flag
+    i = 0
     while True:
         output = process.stdout.readline()
         if output.decode().strip() in ["won the game", "lost the game"]:
@@ -26,6 +28,10 @@ def read_output(process):
         if output.decode().strip().startswith("inputwait"):
             first_flag = True
             game_state = json.loads(output.decode().strip().split()[1])
+            print("save game_state.")
+            with open(str(i)+'init_game_state.pickle', mode='wb') as fo:
+                pickle.dump(game_state, fo)
+            i += 1
             shot_param = select_shot(deepcopy(game_state), process)
             shot(shot_param, False, process)
 
